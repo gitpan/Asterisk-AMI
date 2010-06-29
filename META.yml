@@ -1,6 +1,6 @@
 --- #YAML:1.0
 name:               Asterisk-AMI
-version:            v0.2.0
+version:            v0.2.1
 abstract:           Perl module for interacting with the Asterisk Manager Interface
 author:
     - Ryan Bullock <rrb3942@gmail.com>
@@ -11,7 +11,7 @@ configure_requires:
 build_requires:
     ExtUtils::MakeMaker:  0
 requires:
-    AnyEvent:          5.0
+    AnyEvent:          5.2
     AnyEvent::Handle:  0
     AnyEvent::Socket:  0
     Digest::MD5:       0
