@@ -1,17 +1,77 @@
 Revision history for Perl extension Asterisk::AMI.
+0.2.3
+        - The Carp module is now required.
 
-0.2.2   - Added a call to AE::now_update in blocking methods to force the time for the event loop to update. Fixes an
+        - Switched certain warnings to now use carp where appropriate.
+
+        - We now honor the 'use warnings' pragma and only present warnings when it is enabled. To disable all warnings
+        specific to this module you can use 'no warnings qw(Asterisk::AMI)'.
+
+	- Deprecated the use of the CALLBACK and TIMEOUT keys for setting timeouts and callbacks for actions sent with
+	send_action. A warning is emitted if they are used. Please use the new syntax introduced in version version 0.2.0.
+        This was done to minimize potential hash key collisions with actual manager command options.
+
+	- Allow passing of a perl variable to an action callback via a new argument for the send_action() method.
+	This can be used to pass along additional information to the callback. See the documentation for more details.
+
+	- Internal changes to how the constructor works, mostly pertaining to better option validation and making it
+	more flexible. Obvious errors should now be caught earlier (e.g. not using a subroutine refernce for an error
+	or event handler).
+
+	- Constructor options are now case-insensitive.
+
+        - db_show() was not honoring timeouts passed to it.
+
+	- Merged Asterisk::AMI::Common::Dev into Asterisk::AMI::Common. This was done because Asterisk 1.8 is now released.
+
+	- Notes have been added to Asterisk::AMI::Common methods that require Asterisk 1.8+.
+
+	- Fixed a typo in the get_var() method in Asterisk::AMI::Common that broke the method.
+
+	- We were not always calling the on_connect_err callback when we should have.
+
+	- Added db_deltree() method to Asterisk::AMI::Common for deleting an entire tree in the astdb.
+
+	- Added db_del() method to Asterisk::AMI::Common for deleting an entry in astdb.
+
+	- Added mute_chan() and unmute_chan() methods to Asterisk::AMI::Common for muting/unmuting inbound/outbound/all
+	audio on a channel.
+
+	- Added mixmonitor_mute() and mixmonitor_unmute() methods to Asterisk::AMI::Common for muting inbound and/or outbound audio
+	for a MixMonitor recording.
+
+	- Added sip_notify() method to Asterisk::AMI::Common for sending a SIP Notify on a channel.
+
+	- Added module_check() method to Asterisk::AMI::Common for checking if an asterisk module is currently loaded.
+
+	- Added module_load(), module_reload() and module_unload() methods to Asterisk::AMI::Common for loading/reloading/unloading an asterisk module.
+
+	- Added originate() and orignate_async() methods to Asterisk::AMI::Common for creating a call from asterisk.
+
+	- Added compatibility to some Asterisk::AMI::Common methods so that they can be used with Asterisk 1.4.
+	Compatibility for 1.4 often requires invokation of cli commands and/or multiple manager actions to gather
+	the required information. Check method documentation for more information.
+
+        - Made general changes to become more compliant with PBP. No warnings with perlcritic -4, very few with -3.
+
+        - General refactoring for a some internal methods for the sake of maintainability
+
+        - Updated cmd_server.pl to use new syntax and variable passing
+
+0.2.2
+	- Added a call to AE::now_update in blocking methods to force the time for the event loop to update. Fixes an
 	  issue where if sleep was called for a period before a blocking call after connecting that the resulting 
 	  blocking call would return a timeout (rt #61148).
 
-0.2.1	- Fixed some errors in the documentation
+0.2.1
+	- Fixed some errors in the documentation
 
 	- Fixed a bug where we would leave an empty value in callbacks on a get_response if the response was already in the
 	buffer. Only error message for this happend once the Asterisk::AMI object went away and attempted to flush all
 	pending callbacks.
 	
-	- Require AnyEvent 5.2 or newer, as a feature we rely on was introduced in that release. Note, I have only tested as far back
-	as version 5.26.
+	- Require AnyEvent 5.2 or newer, as a feature we rely on was introduced in that release. Note, I have only tested
+	as far back as version 5.26.
 
 0.2.0
 	- Added new syntax for using callbacks with the send_action method. Old syntax still works.
@@ -77,7 +137,7 @@ Revision history for Perl extension Asterisk::AMI.
 
 	- We were being a bit overzealous when we encounted an error on the socket (during connect or otherwise).
 	We now callback any outstanding actions (as if they had timed out) before we issue the on_error callbacks
-	and do internal cleanup. This bug was causing the a hang during login if a socket connection could not
+	and do internal cleanup. This bug was causing the hang during login if a socket connection could not
 	be made.
 
 	- Fixed a bug with older version of ExtUtils::MakeMaker
