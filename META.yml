@@ -1,6 +1,6 @@
 --- #YAML:1.0
 name:               Asterisk-AMI
-version:            v0.2.3
+version:            v0.2.4
 abstract:           Perl module for interacting with the Asterisk Manager Interface
 author:
     - Ryan Bullock <rrb3942@gmail.com>
