@@ -6,7 +6,7 @@ Asterisk::AMI::Common - Extends Asterisk::AMI to provide simple access to common
 
 =head1 VERSION
 
-0.2.5
+0.2.6
 
 =head1 SYNOPSIS
 
@@ -566,7 +566,7 @@ or the cpan request tracker at https://rt.cpan.org/Public/Bug/Report.html?Queue=
 
 =head1 LICENSE
 
-Copyright (C) 2010 by Ryan Bullock (rrb3942@gmail.com)
+Copyright (C) 2011 by Ryan Bullock (rrb3942@gmail.com)
 
 This module is free software.  You can redistribute it and/or
 modify it under the terms of the Artistic License 2.0.
@@ -584,7 +584,7 @@ use strict;
 use warnings;
 use parent qw(Asterisk::AMI);
 
-use version; our $VERSION = qv(0.2.5);
+use version; our $VERSION = qv(0.2.6);
 
 sub new {
         my ($class, %options) = @_;
@@ -674,21 +674,25 @@ sub db_show {
 
         my $database;
 
+	#Remove summary line
+	delete $action->{'CMD'}->[-1];
+
         foreach my $dbentry (@{$action->{'CMD'}}) {
-                if ($dbentry =~ /^(.+?)\s*:\s*([^.]+)$/ox) {
-                        my $family = $1;
-                        my $val = $2;
-                        
-                        my @split = split /\//ox,$family;
+		my ($family, $val) = split /\s*:\s*/, $dbentry, 2;
 
-                        my $key = pop(@split);
+                my @split = split /\//ox,$family;
 
-                        $family = join('/', @split);
+                my $key = pop(@split);
 
-                        $family = substr($family, 1);
+                $family = join('/', @split);
 
-                        $database->{$family}->{$key} = $val;
-                }
+                $family = substr($family, 1);
+
+		if ($val eq '<bad value>' || $val eq '') {
+			$val = undef;
+		}
+
+                $database->{$family}->{$key} = $val;
         }
 
         return $database;
